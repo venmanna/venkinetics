@@ -1,0 +1,21 @@
+{
+  "name": "apex-fitness-tracker",
+  "version": "1.0.0",
+  "description": "Apex Pulse - Premium PWA Fitness and Meal Tracker with Obsidian & Emerald Glassmorphism UI",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve -l 3000 .",
+    "dev": "npx serve -l 3000 ."
+  },
+  "keywords": [
+    "fitness",
+    "meal-tracker",
+    "pwa",
+    "workout-logger",
+    "macro-counter",
+    "emerald-ui",
+    "glassmorphism"
+  ],
+  "author": "Venkat",
+  "license": "MIT"
+}

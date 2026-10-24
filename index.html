@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#06090a">
+  <meta name="description" content="Apex Pulse — Premium PWA Fitness, Workout & Macro Nutrition Tracker with Obsidian & Emerald Glassmorphism UI">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Apex Pulse">
+  
+  <title>Apex Pulse — Fitness & Nutrition Tracker</title>
+
+  <!-- PWA Manifest & Icons -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./assets/icon.jpg">
+  <link rel="icon" type="image/jpeg" href="./assets/icon.jpg">
+
+  <!-- Typography: Google Fonts (Outfit & Inter) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="./css/variables.css">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/pages.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand-section">
+        <img src="./assets/icon.jpg" alt="Apex Pulse Crest" class="brand-crest">
+        <span class="brand-title">Apex Pulse</span>
+      </div>
+
+      <!-- Date Selector -->
+      <div class="date-selector-bar">
+        <button type="button" class="date-nav-btn" id="btn-prev-date" title="Previous Day" aria-label="Previous day">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <span class="current-date-text" id="current-date-display">Today</span>
+        <button type="button" class="date-nav-btn" id="btn-next-date" title="Next Day" aria-label="Next day">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <input type="date" id="hidden-date-picker" style="display:none;" aria-hidden="true">
+      </div>
+
+      <!-- Quick Install Button (if browser supports install prompt) -->
+      <button type="button" class="btn btn-outline btn-xs hidden btn-trigger-pwa-install" id="btn-pwa-install-header">
+        Install
+      </button>
+    </header>
+
+    <!-- Main Views Container -->
+    <main class="main-content">
+
+      <!-- ================= 1. DASHBOARD VIEW ================= -->
+      <section class="tab-view active" id="view-dashboard">
+        <div class="dashboard-grid">
+
+          <!-- Streak Card -->
+          <div class="streak-card">
+            <div class="streak-left">
+              <span class="streak-fire-icon">🔥</span>
+              <div class="streak-text">
+                <h4 id="dash-streak-count">5 Day Streak</h4>
+                <p>Consistency builds champion habits</p>
+              </div>
+            </div>
+            <span class="badge badge-emerald">Active</span>
+          </div>
+
+          <!-- Hero Calorie & Macro Target Card -->
+          <div class="hero-macro-card glass-panel">
+            <div class="hero-macro-top">
+              <!-- Central SVG Calorie Ring -->
+              <div class="circle-ring-container">
+                <svg class="circle-ring-svg" width="120" height="120" viewBox="0 0 100 100">
+                  <circle class="circle-ring-bg" cx="50" cy="50" r="46" stroke-width="8" fill="none" />
+                  <circle class="circle-ring-progress" id="ring-cal-progress" cx="50" cy="50" r="46" stroke-width="8" fill="none" stroke-dasharray="289" stroke-dashoffset="100" />
+                </svg>
+                <div class="ring-center-content">
+                  <span class="ring-cal-number" id="dash-cal-remaining">1,400</span>
+                  <span class="ring-cal-label">Remaining</span>
+                </div>
+              </div>
+
+              <!-- Macro Numbers Column -->
+              <div class="macro-stats-col">
+                <div class="stat-item">
+                  <span class="stat-item-label">Target</span>
+                  <span class="stat-item-val" id="dash-cal-target">2,400 kcal</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-item-label">Food Intake</span>
+                  <span class="stat-item-val text-emerald" id="dash-cal-consumed">1,000 kcal</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-item-label">Status</span>
+                  <span class="badge badge-emerald">On Track</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Protein, Carbs, Fat Micro Bars -->
+            <div class="macro-bars-grid">
+              <!-- Protein -->
+              <div class="macro-bar-card">
+                <div class="macro-bar-header">
+                  <span class="macro-name protein">Protein</span>
+                </div>
+                <div class="macro-progress-track">
+                  <div class="macro-progress-fill protein" id="dash-protein-bar" style="width: 48%;"></div>
+                </div>
+                <div class="macro-bar-values">
+                  <span class="macro-current-val" id="dash-protein-val">84g</span>
+                  <span id="dash-protein-target">/ 175g</span>
+                </div>
+              </div>
+
+              <!-- Carbs -->
+              <div class="macro-bar-card">
+                <div class="macro-bar-header">
+                  <span class="macro-name carbs">Carbs</span>
+                </div>
+                <div class="macro-progress-track">
+                  <div class="macro-progress-fill carbs" id="dash-carbs-bar" style="width: 40%;"></div>
+                </div>
+                <div class="macro-bar-values">
+                  <span class="macro-current-val" id="dash-carbs-val">97g</span>
+                  <span id="dash-carbs-target">/ 240g</span>
+                </div>
+              </div>
+
+              <!-- Fat -->
+              <div class="macro-bar-card">
+                <div class="macro-bar-header">
+                  <span class="macro-name fat">Fat</span>
+                </div>
+                <div class="macro-progress-track">
+                  <div class="macro-progress-fill fat" id="dash-fat-bar" style="width: 37%;"></div>
+                </div>
+                <div class="macro-bar-values">
+                  <span class="macro-current-val" id="dash-fat-val">24g</span>
+                  <span id="dash-fat-target">/ 65g</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hydration Tracker Card -->
+          <div class="hydration-card glass-panel">
+            <div class="hydration-top">
+              <div class="hydration-title-wrap">
+                <svg class="water-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                <h4>Hydration</h4>
+              </div>
+              <div class="hydration-val">
+                <span id="dash-water-current">1.75L</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);" id="dash-water-target">/ 3.0L goal</span>
+              </div>
+            </div>
+
+            <div class="water-progress-track">
+              <div class="water-progress-fill" id="dash-water-progress-fill" style="width: 58%;"></div>
+            </div>
+
+            <div class="hydration-controls">
+              <div class="water-btn-group">
+                <button type="button" class="btn-water-add" data-amount="250">+250ml</button>
+                <button type="button" class="btn-water-add" data-amount="500">+500ml</button>
+                <button type="button" class="btn-water-add" data-amount="1000">+1.0L</button>
+              </div>
+              <button type="button" class="btn-water-undo" id="btn-water-undo">Undo</button>
+            </div>
+          </div>
+
+          <!-- Today's Training Section -->
+          <div id="dash-workout-summary">
+            <!-- Dynamically populated -->
+          </div>
+
+        </div>
+      </section>
+
+
+      <!-- ================= 2. NUTRITION VIEW ================= -->
+      <section class="tab-view" id="view-nutrition">
+        <div class="nutrition-view-container">
+
+          <!-- Hero Banner -->
+          <div class="nutrition-hero-banner">
+            <img src="./assets/meal_hero.jpg" alt="Healthy gourmet meal bowl" class="nutrition-hero-img">
+            <div class="nutrition-hero-overlay">
+              <h2>Daily Nutrition Log</h2>
+              <p>Track whole foods, macros, and maintain your calorie deficit or surplus.</p>
+            </div>
+          </div>
+
+          <!-- Meals By Category -->
+          <div class="meals-category-list">
+
+            <!-- Breakfast -->
+            <div class="meal-cat-card glass-panel">
+              <div class="meal-cat-header">
+                <div class="meal-cat-title-wrap">
+                  <span style="font-size: 1.1rem;">🍳</span>
+                  <h3 class="meal-cat-title">Breakfast</h3>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span class="meal-cat-cal" id="meal-cal-breakfast">0 kcal</span>
+                  <button type="button" class="btn btn-emerald btn-xs btn-log-meal-trigger" data-type="breakfast">+ Add</button>
+                </div>
+              </div>
+              <div class="logged-meals-items" id="meal-list-breakfast"></div>
+            </div>
+
+            <!-- Lunch -->
+            <div class="meal-cat-card glass-panel">
+              <div class="meal-cat-header">
+                <div class="meal-cat-title-wrap">
+                  <span style="font-size: 1.1rem;">🥗</span>
+                  <h3 class="meal-cat-title">Lunch</h3>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span class="meal-cat-cal" id="meal-cal-lunch">0 kcal</span>
+                  <button type="button" class="btn btn-emerald btn-xs btn-log-meal-trigger" data-type="lunch">+ Add</button>
+                </div>
+              </div>
+              <div class="logged-meals-items" id="meal-list-lunch"></div>
+            </div>
+
+            <!-- Dinner -->
+            <div class="meal-cat-card glass-panel">
+              <div class="meal-cat-header">
+                <div class="meal-cat-title-wrap">
+                  <span style="font-size: 1.1rem;">🥩</span>
+                  <h3 class="meal-cat-title">Dinner</h3>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span class="meal-cat-cal" id="meal-cal-dinner">0 kcal</span>
+                  <button type="button" class="btn btn-emerald btn-xs btn-log-meal-trigger" data-type="dinner">+ Add</button>
+                </div>
+              </div>
+              <div class="logged-meals-items" id="meal-list-dinner"></div>
+            </div>
+
+            <!-- Snacks -->
+            <div class="meal-cat-card glass-panel">
+              <div class="meal-cat-header">
+                <div class="meal-cat-title-wrap">
+                  <span style="font-size: 1.1rem;">🍎</span>
+                  <h3 class="meal-cat-title">Snacks & Shakes</h3>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span class="meal-cat-cal" id="meal-cal-snack">0 kcal</span>
+                  <button type="button" class="btn btn-emerald btn-xs btn-log-meal-trigger" data-type="snack">+ Add</button>
+                </div>
+              </div>
+              <div class="logged-meals-items" id="meal-list-snack"></div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ================= 3. WORKOUTS VIEW ================= -->
+      <section class="tab-view" id="view-workout">
+        <div class="workout-view-container">
+
+          <!-- ACTIVE WORKOUT SESSION (Shown when workout active) -->
+          <div id="workout-active-view" class="hidden">
+            <div class="active-session-header-bar">
+              <div class="active-session-timer-badge">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--emerald-400)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <div>
+                  <h3 id="active-workout-name">Active Session</h3>
+                  <span class="active-timer-display" id="active-workout-timer">00:00</span>
+                </div>
+              </div>
+
+              <div class="active-session-controls">
+                <button type="button" class="btn btn-outline btn-sm" id="btn-discard-workout">Discard</button>
+                <button type="button" class="btn btn-emerald btn-sm" id="btn-finish-workout">Finish</button>
+              </div>
+            </div>
+
+            <div class="active-exercises-container" id="active-exercises-list" style="margin-top: 16px;"></div>
+
+            <button type="button" class="btn btn-outline btn-block" id="btn-add-exercise-to-active" style="margin-top: 14px;">
+              + Add Exercise
+            </button>
+          </div>
+
+          <!-- EMPTY / ROUTINE SELECTOR VIEW (Shown when no workout active) -->
+          <div id="workout-empty-view">
+            <!-- Hero Banner -->
+            <div class="workout-hero-banner">
+              <img src="./assets/workout_hero.jpg" alt="Dark athletic fitness gym studio" class="workout-hero-img">
+              <div class="workout-hero-overlay">
+                <h2>Gym & Workout Logger</h2>
+                <p>Log sets, reps, load, and beat your personal records.</p>
+              </div>
+            </div>
+
+            <!-- Quick Start Empty Session -->
+            <div class="workout-quick-start-box glass-panel" style="margin: 14px 0;">
+              <div>
+                <h4>Empty Workout</h4>
+                <p style="font-size:0.8rem; color:var(--text-muted);">Start training from scratch</p>
+              </div>
+              <button type="button" class="btn btn-emerald btn-sm" id="btn-start-empty-workout">Start Blank</button>
+            </div>
+
+            <!-- Routine Templates -->
+            <h3 style="font-size:1.05rem; margin-bottom: 10px;">Select Routine</h3>
+            <div class="routines-grid" id="routines-grid"></div>
+
+            <!-- Past Workouts History -->
+            <h3 style="font-size:1.05rem; margin: 24px 0 10px 0;">Workout History</h3>
+            <div class="workout-history-list" id="workout-history-list"></div>
+          </div>
+
+        </div>
+      </section>
+
+
+      <!-- ================= 4. METRICS VIEW ================= -->
+      <section class="tab-view" id="view-metrics">
+        <div class="metrics-view-container">
+
+          <!-- KPI Cards -->
+          <div class="kpi-row">
+            <div class="kpi-card glass-panel">
+              <span class="kpi-title">Current Weight</span>
+              <div class="kpi-val" id="metric-current-weight">78.5 kg</div>
+              <span class="metric-delta text-emerald" id="metric-weight-delta">-1.2 kg this month</span>
+            </div>
+            <div class="kpi-card glass-panel">
+              <span class="kpi-title">Log Today</span>
+              <button type="button" class="btn btn-emerald btn-sm btn-block" style="margin-top: 8px;" onclick="document.getElementById('modal-log-weight').showModal()">
+                + Check-In
+              </button>
+            </div>
+          </div>
+
+          <!-- Weight Progression Chart -->
+          <div class="chart-card glass-panel">
+            <div class="chart-header">
+              <h4>Weight Trend</h4>
+              <div class="timeframe-selector">
+                <button type="button" class="timeframe-btn" data-days="7">7D</button>
+                <button type="button" class="timeframe-btn active" data-days="14">14D</button>
+                <button type="button" class="timeframe-btn" data-days="30">30D</button>
+                <button type="button" class="timeframe-btn" data-days="0">All</button>
+              </div>
+            </div>
+            <div class="canvas-chart-container">
+              <canvas id="weight-chart-canvas" class="canvas-chart"></canvas>
+            </div>
+          </div>
+
+          <!-- Weekly Calorie Intake Chart -->
+          <div class="chart-card glass-panel">
+            <div class="chart-header">
+              <h4>Weekly Calorie Intake</h4>
+              <span class="badge badge-emerald">7 Days</span>
+            </div>
+            <div class="canvas-chart-container">
+              <canvas id="weekly-calorie-canvas" class="canvas-chart"></canvas>
+            </div>
+          </div>
+
+          <!-- Personal Records (PR) Hall of Fame -->
+          <div class="prs-section">
+            <h3 style="font-size:1.05rem; margin-bottom: 10px;">🏆 Personal Records (1RM / Best Sets)</h3>
+            <div class="prs-grid" id="prs-container"></div>
+          </div>
+
+          <!-- Weight Log History -->
+          <div class="weight-history-card glass-panel" style="padding: 16px;">
+            <h4 style="font-size: 0.95rem; margin-bottom: 10px;">Recent Check-Ins</h4>
+            <div class="weight-history-rows" id="weight-history-list"></div>
+          </div>
+
+        </div>
+      </section>
+
+
+      <!-- ================= 5. SETTINGS VIEW ================= -->
+      <section class="tab-view" id="view-settings">
+        <div class="settings-view-container">
+
+          <!-- Profile & Daily Goals -->
+          <div class="settings-section-card glass-panel">
+            <h3 class="settings-section-title">Daily Nutrition & Fitness Targets</h3>
+
+            <div id="settings-toast" class="settings-toast hidden">✓ Targets saved successfully!</div>
+
+            <form id="form-profile-settings">
+              <div class="form-group">
+                <label class="form-label" for="settings-name">Your Name</label>
+                <input type="text" class="form-input" id="settings-name" value="Venkat" required>
+              </div>
+
+              <div class="settings-inputs-grid">
+                <div class="form-group">
+                  <label class="form-label" for="settings-cal-target">Daily Calories (kcal)</label>
+                  <input type="number" class="form-input" id="settings-cal-target" value="2400" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="settings-protein-target">Daily Protein (g)</label>
+                  <input type="number" class="form-input" id="settings-protein-target" value="175" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="settings-carbs-target">Daily Carbs (g)</label>
+                  <input type="number" class="form-input" id="settings-carbs-target" value="240" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="settings-fat-target">Daily Fat (g)</label>
+                  <input type="number" class="form-input" id="settings-fat-target" value="65" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="settings-water-target">Water Goal (ml)</label>
+                  <input type="number" step="250" class="form-input" id="settings-water-target" value="3000" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="settings-unit">Weight Unit</label>
+                  <select class="form-select" id="settings-unit">
+                    <option value="kg">Kilograms (kg)</option>
+                    <option value="lbs">Pounds (lbs)</option>
+                  </select>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-emerald btn-block" style="margin-top: 10px;">
+                Save Target Settings
+              </button>
+            </form>
+          </div>
+
+          <!-- PWA Phone Installation Instructions -->
+          <div class="pwa-instruction-card glass-panel" id="ios-install-guide">
+            <h3 style="font-size: 0.95rem; color: var(--emerald-400);">📱 Install On Your Phone (iOS / Android)</h3>
+            <ol class="pwa-instruction-steps">
+              <li><strong>iPhone / iPad (Safari)</strong>: Tap the <strong>Share</strong> button (box with upward arrow) at the bottom of Safari, scroll down and select <strong>"Add to Home Screen"</strong>.</li>
+              <li><strong>Android (Chrome)</strong>: Tap the three dots menu in the top right and select <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</li>
+              <li>Launch from your home screen for full-screen offline native app mode!</li>
+            </ol>
+            <button type="button" class="btn btn-outline btn-sm btn-trigger-pwa-install" style="margin-top: 6px;">
+              Install PWA Now
+            </button>
+          </div>
+
+          <!-- Data Backup & Privacy -->
+          <div class="settings-section-card glass-panel">
+            <h3 class="settings-section-title">Data Privacy & Local Backup</h3>
+            <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">
+              All your workout logs, meals, and metrics are stored locally on your device in secure IndexedDB storage. Zero cloud telemetry or tracking.
+            </p>
+
+            <div style="display: flex; gap: 10px; margin-top: 8px;">
+              <button type="button" class="btn btn-outline btn-sm" id="btn-export-json">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export JSON Backup
+              </button>
+
+              <label class="btn btn-outline btn-sm" style="cursor: pointer;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Restore Backup
+                <input type="file" id="input-import-json" accept=".json" style="display:none;">
+              </label>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Floating Action Button (FAB) Speed Dial -->
+    <div class="fab-container">
+      <div class="fab-speed-dial" id="fab-quick-menu">
+        <div class="fab-dial-item" id="fab-action-meal">
+          <div class="fab-dial-icon">🍎</div>
+          <span>Log Food</span>
+        </div>
+        <div class="fab-dial-item" id="fab-action-workout">
+          <div class="fab-dial-icon">⚡</div>
+          <span>Start Workout</span>
+        </div>
+        <div class="fab-dial-item" id="fab-action-water">
+          <div class="fab-dial-icon">💧</div>
+          <span>+250ml Water</span>
+        </div>
+        <div class="fab-dial-item" id="fab-action-weight">
+          <div class="fab-dial-icon">⚖️</div>
+          <span>Log Weight</span>
+        </div>
+      </div>
+
+      <button type="button" class="fab-main-btn" id="fab-main-button" aria-label="Quick Actions">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+
+    <!-- Rest Timer Sticky Bar -->
+    <div class="rest-timer-bar hidden" id="rest-timer-bar">
+      <div class="rest-timer-pill-info">
+        <div class="rest-ring-mini">
+          <svg width="34" height="34" viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+            <circle cx="18" cy="18" r="15" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="3" />
+            <circle id="rest-ring-fill" cx="18" cy="18" r="15" fill="none" stroke="var(--emerald-400)" stroke-width="3" stroke-dasharray="100" stroke-dashoffset="0" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div>
+          <span style="font-size:0.65rem; color:var(--text-muted); display:block; text-transform:uppercase;">Resting</span>
+          <span class="rest-time-text" id="rest-timer-display">01:30</span>
+        </div>
+      </div>
+      <div class="rest-actions">
+        <button type="button" class="btn btn-outline btn-xs" id="btn-rest-plus-30">+30s</button>
+        <button type="button" class="btn-icon-subtle" id="btn-rest-dismiss" title="Dismiss rest timer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+      <div class="bottom-nav-inner">
+        <!-- Today Tab -->
+        <div class="bottom-nav-item active" data-tab="dashboard">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>Today</span>
+        </div>
+
+        <!-- Meals Tab -->
+        <div class="bottom-nav-item" data-tab="nutrition">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+          <span>Meals</span>
+        </div>
+
+        <!-- Workout Tab -->
+        <div class="bottom-nav-item" data-tab="workout">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 5v14M18 5v14M2 9v6M22 9v6M6 12h12"/></svg>
+          <span>Workout</span>
+        </div>
+
+        <!-- Metrics Tab -->
+        <div class="bottom-nav-item" data-tab="metrics">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <span>Metrics</span>
+        </div>
+
+        <!-- Settings Tab -->
+        <div class="bottom-nav-item" data-tab="settings">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Settings</span>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+
+  <!-- ================= MODALS & DIALOGS ================= -->
+
+  <!-- 1. Add Food Modal Dialog -->
+  <dialog id="modal-add-food">
+    <div class="modal-dialog-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-add-food-title">Log Food</h3>
+        <button type="button" class="btn-close-modal" data-close-dialog aria-label="Close dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Sub-tabs: Search / Custom / Quick Cal -->
+        <div class="modal-tabs-nav">
+          <div class="food-modal-tab active" data-tab="search" onclick="window.app.nutrition.switchModalTab('search')">Catalog</div>
+          <div class="food-modal-tab" data-tab="quick" onclick="window.app.nutrition.switchModalTab('quick')">Quick Cal</div>
+          <div class="food-modal-tab" data-tab="custom" onclick="window.app.nutrition.switchModalTab('custom')">+ Custom</div>
+        </div>
+
+        <!-- TAB: Catalog Search -->
+        <div class="modal-tab-content active" id="tab-search">
+          <div class="form-group">
+            <input type="search" class="form-input" id="food-search-input" placeholder="Search chicken, rice, eggs, whey...">
+          </div>
+
+          <!-- Category filter pills -->
+          <div class="food-category-pills">
+            <span class="food-cat-pill active" data-cat="all">All</span>
+            <span class="food-cat-pill" data-cat="Protein">Proteins</span>
+            <span class="food-cat-pill" data-cat="Carbohydrates">Carbs</span>
+            <span class="food-cat-pill" data-cat="Fats">Fats</span>
+            <span class="food-cat-pill" data-cat="Fruit">Fruits</span>
+            <span class="food-cat-pill" data-cat="Vegetables">Greens</span>
+            <span class="food-cat-pill" data-cat="Supplements">Supps</span>
+          </div>
+
+          <!-- Food scroll list -->
+          <div class="food-items-scroll-list" id="food-list-container"></div>
+
+          <!-- Selected food portion multiplier calculator -->
+          <div class="selected-food-calculator-box hidden" id="food-selected-preview">
+            <h4 id="preview-food-name" style="font-size: 0.95rem; margin-bottom: 8px;">Selected Food</h4>
+            <div style="display:flex; align-items:center; gap: 10px;">
+              <label for="food-serving-amount" style="font-size:0.8rem; color:var(--text-muted);">Serving amount:</label>
+              <input type="number" id="food-serving-amount" value="100" min="1" step="1" class="form-input" style="width: 100px; text-align:center; padding: 6px;">
+              <span id="preview-food-unit" style="font-size:0.8rem; color:var(--text-muted);">grams</span>
+            </div>
+
+            <div class="preview-macros-summary">
+              <span class="preview-cal" id="preview-calculated-cal">165 kcal</span>
+              <span class="preview-macros" id="preview-calculated-macros">P: 31g | C: 0g | F: 3.6g</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: Quick Calorie Log -->
+        <div class="modal-tab-content" id="tab-quick">
+          <div class="form-group">
+            <label class="form-label" for="quick-cal-amount">Calories (kcal)</label>
+            <input type="number" class="form-input" id="quick-cal-amount" placeholder="e.g. 450" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="quick-cal-desc">Description (Optional)</label>
+            <input type="text" class="form-input" id="quick-cal-desc" placeholder="e.g. Protein Smoothie">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="quick-cal-protein">Estimated Protein (g)</label>
+            <input type="number" class="form-input" id="quick-cal-protein" placeholder="e.g. 30">
+          </div>
+        </div>
+
+        <!-- TAB: Create Custom Food -->
+        <div class="modal-tab-content" id="tab-custom">
+          <div class="form-group">
+            <label class="form-label" for="custom-food-name">Food Name</label>
+            <input type="text" class="form-input" id="custom-food-name" placeholder="e.g. Homemade Granola" required>
+          </div>
+          <div class="settings-inputs-grid">
+            <div class="form-group">
+              <label class="form-label" for="custom-food-cal">Calories (per 100g)</label>
+              <input type="number" class="form-input" id="custom-food-cal" placeholder="380" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="custom-food-protein">Protein (g)</label>
+              <input type="number" step="0.1" class="form-input" id="custom-food-protein" placeholder="12">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="custom-food-carbs">Carbs (g)</label>
+              <input type="number" step="0.1" class="form-input" id="custom-food-carbs" placeholder="55">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="custom-food-fat">Fat (g)</label>
+              <input type="number" step="0.1" class="form-input" id="custom-food-fat" placeholder="10">
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline btn-sm" data-close-dialog>Cancel</button>
+        <button type="button" class="btn btn-emerald btn-sm" id="btn-confirm-add-food">Log Food</button>
+        <button type="button" class="btn btn-emerald btn-sm hidden" id="btn-submit-quick-cal">Add Quick Calories</button>
+        <button type="button" class="btn btn-emerald btn-sm hidden" id="btn-submit-custom-food">Save & Select</button>
+      </div>
+    </div>
+  </dialog>
+
+
+  <!-- 2. Select Exercise Modal Dialog -->
+  <dialog id="modal-select-exercise">
+    <div class="modal-dialog-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Select Exercise</h3>
+        <button type="button" class="btn-close-modal" data-close-dialog aria-label="Close dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <input type="search" class="form-input" id="exercise-search-input" placeholder="Search bench, squat, pull-ups...">
+        </div>
+
+        <div class="food-category-pills">
+          <span class="muscle-filter-pill active" data-muscle="all">All</span>
+          <span class="muscle-filter-pill" data-muscle="Chest">Chest</span>
+          <span class="muscle-filter-pill" data-muscle="Back">Back</span>
+          <span class="muscle-filter-pill" data-muscle="Quads">Quads</span>
+          <span class="muscle-filter-pill" data-muscle="Hamstrings">Hamstrings</span>
+          <span class="muscle-filter-pill" data-muscle="Shoulders">Shoulders</span>
+          <span class="muscle-filter-pill" data-muscle="Biceps">Biceps</span>
+          <span class="muscle-filter-pill" data-muscle="Triceps">Triceps</span>
+          <span class="muscle-filter-pill" data-muscle="Core">Core</span>
+        </div>
+
+        <div class="food-items-scroll-list" id="exercise-selection-list"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline btn-sm" data-close-dialog>Close</button>
+      </div>
+    </div>
+  </dialog>
+
+
+  <!-- 3. Log Weight Modal Dialog -->
+  <dialog id="modal-log-weight">
+    <div class="modal-dialog-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Record Body Weight</h3>
+        <button type="button" class="btn-close-modal" data-close-dialog aria-label="Close dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="input-log-weight">Weight Today</label>
+          <input type="number" step="0.1" class="form-input" id="input-log-weight" placeholder="e.g. 78.2" required style="font-size:1.3rem; font-weight:700; text-align:center;">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="input-log-weight-notes">Notes (Optional)</label>
+          <input type="text" class="form-input" id="input-log-weight-notes" placeholder="e.g. Fasted morning weigh-in">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline btn-sm" data-close-dialog>Cancel</button>
+        <button type="button" class="btn btn-emerald btn-sm" id="btn-submit-weight-log">Save Weight</button>
+      </div>
+    </div>
+  </dialog>
+
+
+  <!-- 4. Install Help Modal Dialog -->
+  <dialog id="modal-install-help">
+    <div class="modal-dialog-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Install Apex Pulse</h3>
+        <button type="button" class="btn-close-modal" data-close-dialog aria-label="Close dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p style="font-size: 0.9rem; line-height: 1.5; margin-bottom: 14px;">
+          Apex Pulse is an installable Progressive Web App (PWA). You get full offline gym functionality, smooth haptic feedback, and instant full-screen access directly from your phone's home screen.
+        </p>
+
+        <h4 style="font-size: 0.95rem; color: var(--emerald-400); margin-bottom: 6px;">On iPhone & iPad (Safari):</h4>
+        <ol class="pwa-instruction-steps" style="margin-bottom: 16px;">
+          <li>Tap the <strong>Share</strong> button at bottom center of Safari.</li>
+          <li>Scroll down and tap <strong>"Add to Home Screen"</strong>.</li>
+          <li>Confirm by tapping <strong>Add</strong> in the top right.</li>
+        </ol>
+
+        <h4 style="font-size: 0.95rem; color: var(--emerald-400); margin-bottom: 6px;">On Android (Chrome):</h4>
+        <ol class="pwa-instruction-steps">
+          <li>Tap the <strong>three dots menu (⋮)</strong> in Chrome.</li>
+          <li>Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</li>
+        </ol>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-emerald btn-sm" data-close-dialog>Got It</button>
+      </div>
+    </div>
+  </dialog>
+
+
+  <!-- Scripts (ES Modules) -->
+  <script type="module" src="./js/app.js"></script>
+
+</body>
+</html>
