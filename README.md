@@ -1,6 +1,6 @@
-# ⚡ Apex Pulse — Fitness & Nutrition Tracker
+# ⚡ VenKinetics — Precision Fitness & Nutrition Tracker
 
-> **Premium personal fitness, workout logger, calorie and macro nutrition tracker with Obsidian & Emerald Glassmorphism aesthetics.** Built as an offline-first Progressive Web App (PWA) ready to install on your iPhone or Android home screen.
+> **VenKinetics: Premium personal fitness, workout logger, calorie and macro nutrition tracker with Obsidian & Emerald Glassmorphism aesthetics.** Engineered by **Venkat** as an offline-first Progressive Web App (PWA) ready to install on your iPhone or Android home screen.
 
 ---
 
@@ -40,14 +40,14 @@
 
 ## 📱 How to Install on Your Phone
 
-Apex Pulse is a Progressive Web App (PWA) and can be added directly to your phone's home screen for a full-screen, standalone app experience:
+VenKinetics is a Progressive Web App (PWA) and can be added directly to your phone's home screen for a full-screen, standalone app experience:
 
 ### On iPhone & iPad (Safari)
-1. Open the hosted URL or local network address in **Safari**.
+1. Open the hosted URL or local network address (`http://10.0.0.253:8080`) in **Safari**.
 2. Tap the **Share** button (the square icon with the upward arrow at the bottom).
 3. Scroll down and tap **"Add to Home Screen"**.
 4. Tap **Add** in the top right.
-5. The **Apex Pulse** icon will appear on your phone home screen just like an App Store app!
+5. The **VenKinetics** icon will appear on your phone home screen just like an App Store app!
 
 ### On Android (Chrome)
 1. Open the URL in **Chrome**.
@@ -59,8 +59,6 @@ Apex Pulse is a Progressive Web App (PWA) and can be added directly to your phon
 
 ## 🚀 Running Locally
 
-You can run Apex Pulse locally on your computer and test it immediately:
-
 ```bash
 # Clone the repository
 git clone <your-repo-url>
@@ -68,55 +66,36 @@ cd apex-fitness
 
 # Start a local static server
 npm start
-# or using npx
-npx serve -l 3000 .
+# or using python
+python -m http.server 8080
 ```
 
-Then open `http://localhost:3000` in your browser.
+Then open `http://localhost:8080` in your browser.
 
 ---
 
 ## 🐙 Pushing to Your GitHub Repository
 
-To safely connect and push this project to your GitHub account without sharing your password:
+To safely connect and push this project to your GitHub account:
 
-### Step 1: Initialize Git and Commit
+### Step 1: Create a Repository on GitHub
+1. Go to [GitHub.com/new](https://github.com/new) and create a new repository (e.g. `venkinetics`).
+2. Do not check "Initialize with README".
+
+### Step 2: Link and Push
 ```bash
-git init
-git add .
-git commit -m "feat: initial commit of Apex Pulse fitness & meal tracker PWA"
-```
-
-### Step 2: Create a Repository on GitHub
-1. Go to [GitHub.com](https://github.com/new) and create a new repository (e.g. `apex-fitness-tracker`).
-2. Do not check "Initialize with README" since we already have one.
-
-### Step 3: Link and Push
-```bash
-# Rename branch to main
-git branch -M main
-
 # Add your repository as remote (replace with your GitHub username)
-git remote add origin https://github.com/<YOUR-USERNAME>/apex-fitness-tracker.git
+git remote add origin https://github.com/<YOUR-USERNAME>/venkinetics.git
 
-# Push your code (Git Credential Manager will securely prompt you to log in via browser)
+# Push your code (Git Credential Manager will securely prompt you to log in)
 git push -u origin main
 ```
 
 > **Optional**: To enable **free hosting via GitHub Pages**:
 > In your GitHub repository:
 > Go to **Settings** → **Pages** → Under **Build and deployment**, select **Source: Deploy from a branch** → Branch: `main` / `/ (root)` → Click **Save**.
-> Your app will be live on `https://<YOUR-USERNAME>.github.io/apex-fitness-tracker/` within a few minutes!
+> Your app will be live on `https://<YOUR-USERNAME>.github.io/venkinetics/`!
 
 ---
 
-## 🎨 Tech Stack
-- **Architecture**: Vanilla HTML5, ES Modules JavaScript, Service Worker (PWA)
-- **Styling**: Vanilla CSS3 Custom Properties (Obsidian & Emerald Glassmorphism)
-- **Database**: Client-side IndexedDB with schema versioning
-- **Audio & Haptics**: Web Audio API oscillator synthesis & `navigator.vibrate`
-- **Graphics**: High-DPI HTML5 Canvas Charting
-
----
-
-*Built with passion for health, strength, and high-performance living.*
+*Engineered with precision for peak human performance.*

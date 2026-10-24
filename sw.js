@@ -1,4 +1,4 @@
-const CACHE_NAME = 'apex-pulse-v1';
+const CACHE_NAME = 'venkinetics-v1';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -26,9 +26,9 @@ const STATIC_ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[Apex Pulse SW] Pre-caching static assets');
+      console.log('[VenKinetics SW] Pre-caching static assets');
       return cache.addAll(STATIC_ASSETS).catch((err) => {
-        console.warn('[Apex Pulse SW] Non-fatal caching warning:', err);
+        console.warn('[VenKinetics SW] Non-fatal caching warning:', err);
       });
     }).then(() => self.skipWaiting())
   );
@@ -41,7 +41,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames.map((name) => {
           if (name !== CACHE_NAME) {
-            console.log('[Apex Pulse SW] Deleting obsolete cache:', name);
+            console.log('[VenKinetics SW] Deleting obsolete cache:', name);
             return caches.delete(name);
           }
         })
@@ -52,7 +52,6 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event - Cache-first with network fallback for offline gym usage
 self.addEventListener('fetch', (event) => {
-  // Only handle GET requests and http/https scheme
   if (event.request.method !== 'GET' || !event.request.url.startsWith('http')) {
     return;
   }
@@ -60,7 +59,6 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
-        // Return cached version, but update cache in background (stale-while-revalidate for local assets)
         fetch(event.request)
           .then((networkResponse) => {
             if (networkResponse && networkResponse.status === 200) {
@@ -69,20 +67,16 @@ self.addEventListener('fetch', (event) => {
               });
             }
           })
-          .catch(() => {
-            // Offline - ignore background refresh failure
-          });
+          .catch(() => {});
         return cachedResponse;
       }
 
-      // If not in cache, fetch from network
       return fetch(event.request)
         .then((networkResponse) => {
           if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
             return networkResponse;
           }
 
-          // Clone response to cache it
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache);
@@ -91,7 +85,6 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         })
         .catch(() => {
-          // If offline and requesting navigation, return index.html
           if (event.request.mode === 'navigate') {
             return caches.match('./index.html');
           }

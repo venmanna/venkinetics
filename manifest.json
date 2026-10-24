@@ -1,7 +1,7 @@
 {
-  "name": "Apex Pulse — Fitness & Nutrition Tracker",
-  "short_name": "Apex Pulse",
-  "description": "Premium personal fitness, workout logger, calorie and macro nutrition tracker with obsidian glass aesthetics.",
+  "name": "VenKinetics — Fitness & Nutrition Tracker",
+  "short_name": "VenKinetics",
+  "description": "VenKinetics — Precision personal fitness, workout logger, calorie and macro nutrition tracker engineered by Venkat.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -27,14 +27,14 @@
     {
       "name": "Log Meal",
       "short_name": "Log Meal",
-      "description": "Quickly record a meal or calories",
+      "description": "Record meal macros and calories",
       "url": "./index.html#nutrition",
       "icons": [{ "src": "./assets/icon.jpg", "sizes": "192x192" }]
     },
     {
       "name": "Start Workout",
       "short_name": "Workout",
-      "description": "Start an active workout session",
+      "description": "Start an active gym session",
       "url": "./index.html#workout",
       "icons": [{ "src": "./assets/icon.jpg", "sizes": "192x192" }]
     },

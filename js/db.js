@@ -1,9 +1,9 @@
 /**
- * Apex Pulse - IndexedDB Database Storage Engine
+ * VenKinetics - IndexedDB Database Storage Engine
  * Offline-first, fast local storage for workouts, nutrition, hydration & body metrics.
  */
 
-const DB_NAME = 'apex_pulse_db';
+const DB_NAME = 'venkinetics_db';
 const DB_VERSION = 1;
 
 class Database {

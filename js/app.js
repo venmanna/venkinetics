@@ -288,7 +288,7 @@ class ApexPulseApp {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `apex-pulse-backup-${this.getTodayDateString()}.json`;
+    a.download = `venkinetics-backup-${this.getTodayDateString()}.json`;
     a.click();
     URL.revokeObjectURL(url);
     sound.setLogged();

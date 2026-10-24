@@ -1,13 +1,14 @@
 {
-  "name": "apex-fitness-tracker",
+  "name": "venkinetics",
   "version": "1.0.0",
-  "description": "Apex Pulse - Premium PWA Fitness and Meal Tracker with Obsidian & Emerald Glassmorphism UI",
+  "description": "VenKinetics — Precision Fitness, Workout Logger & Macro Nutrition Tracker",
   "main": "index.html",
   "scripts": {
     "start": "npx serve -l 3000 .",
     "dev": "npx serve -l 3000 ."
   },
   "keywords": [
+    "venkinetics",
     "fitness",
     "meal-tracker",
     "pwa",
