@@ -85,14 +85,13 @@ a {
   flex-direction: column;
 }
 
-/* Header with full Dynamic Island clearance */
+/* Header with generous Dynamic Island clearance */
 .app-header {
   position: sticky;
   top: 0;
   z-index: 40;
-  min-height: calc(var(--safe-top) + 54px);
-  padding-top: calc(var(--safe-top) + 6px);
-  padding-bottom: 10px;
+  padding-top: max(calc(var(--safe-top) + 14px), 72px);
+  padding-bottom: 14px;
   padding-left: 16px;
   padding-right: 16px;
   box-sizing: border-box;
@@ -101,7 +100,7 @@ a {
   justify-content: space-between;
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  background: rgba(6, 9, 10, 0.95);
+  background: rgba(6, 9, 10, 0.98);
   border-bottom: 1px solid var(--border-subtle);
 }
 
