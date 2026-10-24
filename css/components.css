@@ -232,8 +232,20 @@
   height: 100%;
   color: var(--text-muted);
   cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
   transition: var(--transition-fast);
   position: relative;
+  pointer-events: auto;
+}
+
+.bottom-nav-item * {
+  pointer-events: none;
 }
 
 .bottom-nav-item svg {

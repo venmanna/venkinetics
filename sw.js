@@ -1,4 +1,4 @@
-const CACHE_NAME = 'venkinetics-v1';
+const CACHE_NAME = 'venkinetics-v2';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -22,26 +22,22 @@ const STATIC_ASSETS = [
   './assets/workout_hero.jpg'
 ];
 
-// Install event - Cache static assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[VenKinetics SW] Pre-caching static assets');
       return cache.addAll(STATIC_ASSETS).catch((err) => {
-        console.warn('[VenKinetics SW] Non-fatal caching warning:', err);
+        console.warn('[VenKinetics SW] Cache error:', err);
       });
     }).then(() => self.skipWaiting())
   );
 });
 
-// Activate event - Clean up old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
+    caches.keys().then((names) => {
       return Promise.all(
-        cacheNames.map((name) => {
+        names.map((name) => {
           if (name !== CACHE_NAME) {
-            console.log('[VenKinetics SW] Deleting obsolete cache:', name);
             return caches.delete(name);
           }
         })
@@ -50,45 +46,40 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - Cache-first with network fallback for offline gym usage
+// Network-first for HTML and JS scripts (always gets latest code), cache fallback when offline
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET' || !event.request.url.startsWith('http')) {
     return;
   }
 
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        fetch(event.request)
-          .then((networkResponse) => {
-            if (networkResponse && networkResponse.status === 200) {
-              caches.open(CACHE_NAME).then((cache) => {
-                cache.put(event.request, networkResponse);
-              });
-            }
-          })
-          .catch(() => {});
-        return cachedResponse;
-      }
+  const isCodeOrDoc = event.request.mode === 'navigate' || event.request.url.endsWith('.js') || event.request.url.endsWith('.html');
 
-      return fetch(event.request)
+  if (isCodeOrDoc) {
+    event.respondWith(
+      fetch(event.request)
         .then((networkResponse) => {
-          if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-            return networkResponse;
+          if (networkResponse && networkResponse.status === 200) {
+            const clone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
           }
-
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
-
           return networkResponse;
         })
-        .catch(() => {
-          if (event.request.mode === 'navigate') {
-            return caches.match('./index.html');
-          }
-        });
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Cache-first for images/styles/fonts
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      if (cached) return cached;
+      return fetch(event.request).then((response) => {
+        if (response && response.status === 200) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        }
+        return response;
+      });
     })
   );
 });

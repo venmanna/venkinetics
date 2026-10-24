@@ -1,5 +1,5 @@
 /**
- * Apex Pulse - Main Application Entry Point & Controller
+ * VenKinetics - Main Application Entry Point & Controller
  */
 
 import { db } from './db.js';
@@ -9,11 +9,11 @@ import { WorkoutController } from './workouts.js';
 import { MetricsController } from './metrics.js';
 import { PWAManager } from './pwa.js';
 
-class ApexPulseApp {
+class VenKineticsApp {
   constructor() {
     this.selectedDate = this.getTodayDateString();
     this.activeTab = 'dashboard';
-    this.profile = null;
+    this.profile = db.getDefaultProfile(); // Default profile immediately available
 
     this.nutrition = new NutritionController(this);
     this.workouts = new WorkoutController(this);
@@ -48,35 +48,47 @@ class ApexPulseApp {
   }
 
   async init() {
-    console.log('[Apex Pulse] Initializing application...');
-    
-    // Seed starter data if fresh database
-    await db.seedDemoDataIfEmpty();
-    this.profile = await db.getProfile();
+    console.log('[VenKinetics] Initializing application...');
 
-    // Initialize sub-controllers
-    await this.nutrition.init();
-    await this.workouts.init();
-    await this.metrics.init();
-    this.pwa.init();
-
+    // 1. BIND GLOBAL EVENTS FIRST (Synchronous - guarantees buttons & tabs respond instantly)
     this.bindGlobalEvents();
-    this.switchTab('dashboard');
-    await this.renderAll();
 
-    // Check if url hash specifies tab
-    const hash = window.location.hash.replace('#', '');
-    if (['dashboard', 'nutrition', 'workout', 'metrics', 'settings'].includes(hash)) {
-      this.switchTab(hash);
+    // 2. Set active initial view immediately
+    const initialHash = (window.location.hash || '').replace('#', '');
+    const validTabs = ['dashboard', 'nutrition', 'workout', 'metrics', 'settings'];
+    const startTab = validTabs.includes(initialHash) ? initialHash : 'dashboard';
+    this.switchTab(startTab);
+
+    // 3. Initialize PWA handlers
+    try {
+      this.pwa.init();
+    } catch (e) {
+      console.warn('PWA init warning:', e);
+    }
+
+    // 4. Initialize Database & Controllers asynchronously
+    try {
+      await db.seedDemoDataIfEmpty();
+      this.profile = await db.getProfile();
+
+      await this.nutrition.init();
+      await this.workouts.init();
+      await this.metrics.init();
+
+      await this.renderAll();
+    } catch (err) {
+      console.error('[VenKinetics] Async init error:', err);
     }
   }
 
   bindGlobalEvents() {
-    // Bottom navigation bar items
-    document.querySelectorAll('.bottom-nav-item').forEach((item) => {
+    // Bottom Navigation Bar Items (Click + Touch delegation)
+    const navItems = document.querySelectorAll('.bottom-nav-item');
+    navItems.forEach((item) => {
       item.addEventListener('click', (e) => {
-        const tab = e.currentTarget.dataset.tab;
-        sound.tap();
+        e.preventDefault();
+        const tab = item.dataset.tab;
+        try { sound.tap(); } catch (err) {}
         this.switchTab(tab);
       });
     });
@@ -113,10 +125,9 @@ class ApexPulseApp {
       fabMain.addEventListener('click', () => {
         fabMenu.classList.toggle('active');
         fabMain.classList.toggle('active');
-        sound.tap();
+        try { sound.tap(); } catch (err) {}
       });
 
-      // Close FAB menu when clicking outside
       document.addEventListener('click', (e) => {
         if (!fabMain.contains(e.target) && !fabMenu.contains(e.target)) {
           fabMenu.classList.remove('active');
@@ -172,7 +183,7 @@ class ApexPulseApp {
       btnWaterUndo.addEventListener('click', () => this.handleWaterUndo());
     }
 
-    // Modal Close Buttons (for any dialog with [data-close-dialog])
+    // Modal Close Buttons
     document.querySelectorAll('[data-close-dialog]').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         const dialog = e.currentTarget.closest('dialog');
@@ -211,35 +222,60 @@ class ApexPulseApp {
     const month = String(current.getMonth() + 1).padStart(2, '0');
     const day = String(current.getDate()).padStart(2, '0');
     this.selectedDate = `${year}-${month}-${day}`;
-    sound.tap();
+    try { sound.tap(); } catch (err) {}
     this.renderAll();
   }
 
   switchTab(tabId) {
+    if (!tabId) return;
     this.activeTab = tabId;
-    window.location.hash = tabId;
 
-    document.querySelectorAll('.tab-view').forEach((view) => {
-      view.classList.toggle('active', view.id === `view-${tabId}`);
+    // Use replaceState to avoid breaking iOS standalone PWA
+    try {
+      history.replaceState(null, '', '#' + tabId);
+    } catch (e) {}
+
+    // Show selected view, hide all others
+    const views = document.querySelectorAll('.tab-view');
+    views.forEach((view) => {
+      const isTarget = view.id === `view-${tabId}`;
+      if (isTarget) {
+        view.classList.add('active');
+        view.style.display = 'block';
+      } else {
+        view.classList.remove('active');
+        view.style.display = 'none';
+      }
     });
 
-    document.querySelectorAll('.bottom-nav-item').forEach((item) => {
-      item.classList.toggle('active', item.dataset.tab === tabId);
+    // Update bottom nav active indicator
+    const navItems = document.querySelectorAll('.bottom-nav-item');
+    navItems.forEach((item) => {
+      const isCurrent = item.dataset.tab === tabId;
+      item.classList.toggle('active', isCurrent);
     });
 
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    window.scrollTo(0, 0);
 
-    // Refresh specific view data if switching to it
-    if (tabId === 'metrics') {
-      this.metrics.renderMetricsView();
-    } else if (tabId === 'workout') {
-      this.workouts.renderWorkoutHistory();
+    // Refresh view data
+    try {
+      if (tabId === 'metrics') {
+        this.metrics.renderMetricsView();
+      } else if (tabId === 'workout') {
+        this.workouts.renderWorkoutHistory();
+      } else if (tabId === 'nutrition') {
+        this.nutrition.renderNutritionView(this.selectedDate);
+      } else if (tabId === 'dashboard') {
+        this.renderDashboard();
+      }
+    } catch (err) {
+      console.warn('Tab render error:', err);
     }
   }
 
   async handleQuickWaterAdd(amountMl) {
     await db.addWater(this.selectedDate, amountMl);
-    sound.tap();
+    try { sound.tap(); } catch (err) {}
     await this.renderDashboard();
   }
 
@@ -248,7 +284,7 @@ class ApexPulseApp {
     if (logs.length > 0) {
       const last = logs[logs.length - 1];
       await db.deleteWater(last.id);
-      sound.tap();
+      try { sound.tap(); } catch (err) {}
       await this.renderDashboard();
     }
   }
@@ -271,7 +307,7 @@ class ApexPulseApp {
     this.profile.unit = unitSelect ? unitSelect.value : 'kg';
 
     await db.saveProfile(this.profile);
-    sound.celebrate();
+    try { sound.celebrate(); } catch (err) {}
 
     const toast = document.getElementById('settings-toast');
     if (toast) {
@@ -291,7 +327,7 @@ class ApexPulseApp {
     a.download = `venkinetics-backup-${this.getTodayDateString()}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    sound.setLogged();
+    try { sound.setLogged(); } catch (err) {}
   }
 
   async handleImportData(e) {
@@ -303,7 +339,7 @@ class ApexPulseApp {
       const parsed = JSON.parse(text);
       await db.importFullData(parsed);
       this.profile = await db.getProfile();
-      sound.celebrate();
+      try { sound.celebrate(); } catch (err) {}
       alert('Data restored successfully!');
       this.renderAll();
     } catch (err) {
@@ -356,7 +392,7 @@ class ApexPulseApp {
 
     if (ringCalProgress) {
       const pct = Math.min(100, Math.max(0, (totals.calories / targetCal) * 100));
-      const circumference = 2 * Math.PI * 46; // r=46
+      const circumference = 2 * Math.PI * 46;
       ringCalProgress.style.strokeDasharray = circumference;
       ringCalProgress.style.strokeDashoffset = circumference - (pct / 100) * circumference;
     }
@@ -446,8 +482,12 @@ class ApexPulseApp {
   }
 }
 
-// Instantiate and attach to window
-window.app = new ApexPulseApp();
-document.addEventListener('DOMContentLoaded', () => {
+// Global instance creation
+window.app = new VenKineticsApp();
+
+// Direct boot check (handles both async DOM load and pre-parsed readyState)
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => window.app.init());
+} else {
   window.app.init();
-});
+}

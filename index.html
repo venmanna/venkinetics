@@ -535,34 +535,34 @@
     <nav class="bottom-nav">
       <div class="bottom-nav-inner">
         <!-- Today Tab -->
-        <div class="bottom-nav-item active" data-tab="dashboard">
+        <button type="button" class="bottom-nav-item active" data-tab="dashboard" onclick="window.app && window.app.switchTab('dashboard')">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
           <span>Today</span>
-        </div>
+        </button>
 
         <!-- Meals Tab -->
-        <div class="bottom-nav-item" data-tab="nutrition">
+        <button type="button" class="bottom-nav-item" data-tab="nutrition" onclick="window.app && window.app.switchTab('nutrition')">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
           <span>Meals</span>
-        </div>
+        </button>
 
         <!-- Workout Tab -->
-        <div class="bottom-nav-item" data-tab="workout">
+        <button type="button" class="bottom-nav-item" data-tab="workout" onclick="window.app && window.app.switchTab('workout')">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 5v14M18 5v14M2 9v6M22 9v6M6 12h12"/></svg>
           <span>Workout</span>
-        </div>
+        </button>
 
         <!-- Metrics Tab -->
-        <div class="bottom-nav-item" data-tab="metrics">
+        <button type="button" class="bottom-nav-item" data-tab="metrics" onclick="window.app && window.app.switchTab('metrics')">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
           <span>Metrics</span>
-        </div>
+        </button>
 
         <!-- Settings Tab -->
-        <div class="bottom-nav-item" data-tab="settings">
+        <button type="button" class="bottom-nav-item" data-tab="settings" onclick="window.app && window.app.switchTab('settings')">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           <span>Settings</span>
-        </div>
+        </button>
       </div>
     </nav>
   </div>
