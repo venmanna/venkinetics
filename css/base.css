@@ -85,19 +85,23 @@ a {
   flex-direction: column;
 }
 
-/* Header */
+/* Header with full Dynamic Island clearance */
 .app-header {
   position: sticky;
   top: 0;
   z-index: 40;
-  height: var(--header-height);
-  padding: calc(var(--safe-top) + 8px) 16px 8px 16px;
+  min-height: calc(var(--safe-top) + 54px);
+  padding-top: calc(var(--safe-top) + 6px);
+  padding-bottom: 10px;
+  padding-left: 16px;
+  padding-right: 16px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  background: rgba(6, 9, 10, 0.75);
+  background: rgba(6, 9, 10, 0.95);
   border-bottom: 1px solid var(--border-subtle);
 }
 
